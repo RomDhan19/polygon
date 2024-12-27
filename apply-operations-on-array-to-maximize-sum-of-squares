@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int maxSum(vector<int>& nums, int k) {
+        // Define constants
+        const int MOD = 1e9 + 7;
+        int n = nums.size();
+        
+        // Array to store count of set bits at each position (0-31)
+        vector<int> bitCount(32, 0);
+        
+        // Count set bits for each position across all numbers
+        for(int num : nums) {
+            for(int bit = 0; bit < 32; bit++) {
+                if(num & (1 << bit)) {
+                    bitCount[bit]++;
+                }
+            }
+        }
+        
+        long long result = 0;
+        
+        // Construct k optimal numbers
+        for(int i = 0; i < k; i++) {
+            long long currentNum = 0;
+            
+            // For each optimal number, include bits starting from most significant
+            // where bits are still available
+            for(int bit = 31; bit >= 0; bit--) {
+                if(bitCount[bit] > 0) {
+                    currentNum |= (1LL << bit);
+                    bitCount[bit]--;
+                }
+            }
+            
+            // Add square of current number to result
+            result = (result + (currentNum * currentNum) % MOD) % MOD;
+        }
+        
+        return result;
+    }
+};
